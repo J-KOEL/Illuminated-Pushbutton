@@ -5,16 +5,16 @@ import pandas as pd
 @st.cache_data
 def load_data():
     # LED
-    led_light_unit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit 2.csv")
-    led_lens_color_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor 2.csv")
-    led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage 2.csv")
+    led_light_unit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv")
+    led_lens_color_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv")
+    led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv")
 
     # Incandescent
     inc_light_unit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv")
     inc_lens_color_df = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv")
 
     # Circuit (shared)
-    circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit 2.csv")
+    circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv")
 
     # Create dictionaries
     led_light_unit = {row["Code"].strip(): row["Label"].strip() for _, row in led_light_unit_df.iterrows()}
