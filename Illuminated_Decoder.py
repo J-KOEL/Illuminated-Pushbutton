@@ -51,7 +51,6 @@ if catalog_input:
         st.markdown("### 🧩 Component Part Numbers")
         st.write(f"**Light Unit P/N**: `{lightunit_pn}`")
         st.write(f"**Lens Color P/N**: `{lens_pn}`")
-        st.write(f"**Voltage P/N**: `{voltage_pn}`")
         st.write(f"**Circuit P/N**: `{circuit_pn}`")
     else:
         st.error("Catalog number must start with '10250T' and be long enough to decode.")
