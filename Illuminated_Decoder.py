@@ -11,12 +11,12 @@ def load_data():
     led_light = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv", skiprows=2, header=None)
     led_volt = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv", header=0)
 
-    inc_lens_map = {str(code).strip(): str(label).strip() for label, code in zip(inc_lens[0], inc_lens[1])}
-    inc_light_map = {str(code).strip(): str(label).strip() for label, code in zip(inc_light[0], inc_light[1])}
-    circuit_map = {str(code).strip(): str(label).strip() for label, code in zip(circuit[0], circuit[1])}
-    led_lens_map = {str(row['Code']).strip(): str(row['Label']).strip() for _, row in led_lens.iterrows()}
-    led_light_map = {str(code).strip(): str(label).strip() for label, code in zip(led_light[0], led_light[1])}
-    led_volt_map = {str(row['Code']).strip(): str(row['Label']).strip() for _, row in led_volt.iterrows()}
+    inc_lens_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(inc_lens[0], inc_lens[1])}
+    inc_light_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(inc_light[0], inc_light[1])}
+    circuit_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(circuit[0], circuit[1])}
+    led_lens_map = {str(row['Code']).strip().upper(): str(row['Label']).strip() for _, row in led_lens.iterrows()}
+    led_light_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(led_light[0], led_light[1])}
+    led_volt_map = {str(row['Code']).strip().upper(): str(row['Label']).strip() for _, row in led_volt.iterrows()}
 
     return inc_lens_map, inc_light_map, circuit_map, led_lens_map, led_light_map, led_volt_map
 
@@ -31,6 +31,12 @@ def decode_led(pn):
     if not match:
         return None, "Regex match failed"
     series, lightunit, lens, voltage, circuit = match.groups()
+
+    lightunit = lightunit.strip().upper()
+    lens = lens.strip().upper()
+    voltage = voltage.strip().upper()
+    circuit = circuit.strip().upper()
+
     debug_info = {
         "Series": series,
         "Light Unit Code": lightunit,
@@ -42,6 +48,7 @@ def decode_led(pn):
         "Voltage Found": voltage in led_volt_map,
         "Circuit Found": circuit in circuit_map
     }
+
     return {
         "Series": series,
         "Light Unit": f"{lightunit} → {led_light_map.get(lightunit, 'Unknown')}",
@@ -60,6 +67,11 @@ def decode_incandescent(pn):
     if not match:
         return None, "Regex match failed"
     series, lightunit, lens, circuit = match.groups()
+
+    lightunit = lightunit.strip().upper()
+    lens = lens.strip().upper()
+    circuit = circuit.strip().upper()
+
     debug_info = {
         "Series": series,
         "Light Unit Code": lightunit,
@@ -69,6 +81,7 @@ def decode_incandescent(pn):
         "Lens Found": lens in inc_lens_map,
         "Circuit Found": circuit in circuit_map
     }
+
     return {
         "Series": series,
         "Light Unit": f"{lightunit} → {inc_light_map.get(lightunit, 'Unknown')}",
