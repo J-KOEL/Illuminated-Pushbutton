@@ -4,28 +4,29 @@ import pandas as pd
 # Load CSV files
 @st.cache_data
 def load_data():
-    # LED
-    led_light_unit = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv")
-    led_lens_color = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv")
-    led_voltage = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv")
+    # Load all CSVs with consistent column handling
+    led_light_unit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
+    led_lens_color_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
+    led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
 
-    # Incandescent (fixed for malformed CSV)
-    inc_light_unit = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv")
-    inc_lens_color = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv")
-    circuit = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv")
+    inc_light_unit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
+    inc_lens_color_df = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
 
-    # Create dictionaries
+    circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit 2.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
+
+    # Create lookup dictionaries
     led_light_unit = {row["Code"].strip(): row["Label"].strip() for _, row in led_light_unit_df.iterrows()}
     led_lens_color = {row["Code"].strip(): row["Label"].strip() for _, row in led_lens_color_df.iterrows()}
     led_voltage = {row["Code"].strip(): row["Label"].strip() for _, row in led_voltage_df.iterrows()}
 
     inc_light_unit = {row["Code"].strip(): row["Label"].strip() for _, row in inc_light_unit_df.iterrows()}
     inc_lens_color = {row["Code"].strip(): row["Label"].strip() for _, row in inc_lens_color_df.iterrows()}
-    circuit = {row["Code"].strip(): row["Label"].strip() for _, row in circuit_df.iterrows()}
 
-    return led_light_unit, led_lens_color, led_voltage, inc_light_unit, inc_lens_color, circuit
+    circuit_lookup = {row["Code"].strip(): row["Label"].strip() for _, row in circuit_df.iterrows()}
 
-# Load all dictionaries
+    return led_light_unit, led_lens_color, led_voltage, inc_light_unit, inc_lens_color, circuit_lookup
+
+# Load data
 led_light_unit, led_lens_color, led_voltage, inc_light_unit, inc_lens_color, circuit_lookup = load_data()
 
 # UI
