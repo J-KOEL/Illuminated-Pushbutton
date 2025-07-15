@@ -4,15 +4,17 @@ import pandas as pd
 # Load CSV files
 @st.cache_data
 def load_data():
-    # Load all CSVs with consistent column handling
+    # LED files
     led_light_unit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
     led_lens_color_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
     led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
 
+    # Incandescent files
     inc_light_unit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
     inc_lens_color_df = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
 
-    circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit 2.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
+    # Circuit file
+    circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv", header=None, names=["Label", "Code"], usecols=[0, 1], skiprows=1)
 
     # Create lookup dictionaries
     led_light_unit = {row["Code"].strip(): row["Label"].strip() for _, row in led_light_unit_df.iterrows()}
@@ -47,16 +49,11 @@ if catalog_input:
             voltage_code = code_part[6:8]
             circuit_code = code_part[8:]
 
-            light_unit_label = led_light_unit.get(light_unit_code, "Unknown Light Unit")
-            lens_color_label = led_lens_color.get(lens_color_code, "Unknown Lens Color")
-            voltage_label = led_voltage.get(voltage_code, "Unknown LED Voltage")
-            circuit_label = circuit_lookup.get(circuit_code, "Unknown Circuit")
-
             st.markdown("### ✅ Decoded Result (LED)")
-            st.write(f"**Light Unit**: {light_unit_label}")
-            st.write(f"**Lens Color**: {lens_color_label}")
-            st.write(f"**LED Voltage**: {voltage_label}")
-            st.write(f"**Circuit Type**: {circuit_label}")
+            st.write(f"**Light Unit**: {led_light_unit.get(light_unit_code, 'Unknown')}")
+            st.write(f"**Lens Color**: {led_lens_color.get(lens_color_code, 'Unknown')}")
+            st.write(f"**LED Voltage**: {led_voltage.get(voltage_code, 'Unknown')}")
+            st.write(f"**Circuit Type**: {circuit_lookup.get(circuit_code, 'Unknown')}")
 
         else:
             # Try Incandescent (light unit code is 3 chars)
@@ -65,14 +62,10 @@ if catalog_input:
             circuit_code = code_part[6:]
 
             if light_unit_code in inc_light_unit:
-                light_unit_label = inc_light_unit.get(light_unit_code, "Unknown Light Unit")
-                lens_color_label = inc_lens_color.get(lens_color_code, "Unknown Lens Color")
-                circuit_label = circuit_lookup.get(circuit_code, "Unknown Circuit")
-
                 st.markdown("### ✅ Decoded Result (Incandescent)")
-                st.write(f"**Light Unit**: {light_unit_label}")
-                st.write(f"**Lens Color**: {lens_color_label}")
-                st.write(f"**Circuit Type**: {circuit_label}")
+                st.write(f"**Light Unit**: {inc_light_unit.get(light_unit_code, 'Unknown')}")
+                st.write(f"**Lens Color**: {inc_lens_color.get(lens_color_code, 'Unknown')}")
+                st.write(f"**Circuit Type**: {circuit_lookup.get(circuit_code, 'Unknown')}")
             else:
                 st.error("Unrecognized light unit code.")
     else:
