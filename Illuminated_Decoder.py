@@ -1,116 +1,57 @@
 import streamlit as st
 import pandas as pd
-import re
 
+# Load CSV files
 @st.cache_data
 def load_data():
-    inc_lens = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv", header=None)
-    inc_light = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv", header=None)
-    circuit = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv", header=None)
-    led_lens = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv", header=0)
-    led_light = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv", skiprows=2, header=None)
-    led_volt = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv", header=0)
+    # Load LED component files
+    led_lightunit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit 3.csv", skiprows=2, header=None)
+    led_lenscolor_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor 3.csv")
+    led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage 4.csv")
 
-    inc_lens_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(inc_lens[0], inc_lens[1])}
-    inc_light_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(inc_light[0], inc_light[1])}
-    circuit_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(circuit[0], circuit[1])}
-    led_lens_map = {str(row['Code']).strip().upper(): str(row['Label']).strip() for _, row in led_lens.iterrows()}
-    led_light_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(led_light[0], led_light[1])}
-    led_volt_map = {str(row['Code']).strip().upper(): str(row['Label']).strip() for _, row in led_volt.iterrows()}
+    # Build lookup dictionaries
+    lightunit_lookup = {str(v).strip(): str(k).strip() for k, v in zip(led_lightunit_df[0], led_lightunit_df[1])}
+    lenscolor_lookup = {str(row['Code']).strip(): str(row['Label']).strip() for _, row in led_lenscolor_df.iterrows()}
+    voltage_lookup = {str(row['Code']).strip(): str(row['Label']).strip() for _, row in led_voltage_df.iterrows()}
 
-    return inc_lens_map, inc_light_map, circuit_map, led_lens_map, led_light_map, led_volt_map
+    return lightunit_lookup, lenscolor_lookup, voltage_lookup
 
-inc_lens_map, inc_light_map, circuit_map, led_lens_map, led_light_map, led_volt_map = load_data()
+lightunit_lookup, lenscolor_lookup, voltage_lookup = load_data()
 
-st.title("💡 Illuminated Pushbutton Decoder")
+# UI
+st.title("🔍 10250T Illuminated (LED) Catalog Number Decoder")
 
-catalog_input = st.text_input("Enter a 10250T catalog number (e.g., 10250T397LRD06-53 or 10250T416C21-51):")
-
-def decode_led(pn):
-    match = re.match(r"(10250T)(\d{3}L)([A-Z]{2})([0-9A-Z]{2})-(\d{2})", pn)
-    if not match:
-        return None, "Regex match failed"
-    series, lightunit, lens, voltage, circuit = match.groups()
-
-    lightunit = lightunit.strip().upper()
-    lens = lens.strip().upper()
-    voltage = voltage.strip().upper()
-    circuit = circuit.strip().upper()
-
-    debug_info = {
-        "Series": series,
-        "Light Unit Code": lightunit,
-        "Lens Code": lens,
-        "Voltage Code": voltage,
-        "Circuit Code": circuit,
-        "Light Unit Found": lightunit in led_light_map,
-        "Lens Found": lens in led_lens_map,
-        "Voltage Found": voltage in led_volt_map,
-        "Circuit Found": circuit in circuit_map
-    }
-
-    return {
-        "Series": series,
-        "Light Unit": f"{lightunit} → {led_light_map.get(lightunit, 'Unknown')}",
-        "Lens Color": f"{lens} → {led_lens_map.get(lens, 'Unknown')}",
-        "Voltage": f"{voltage} → {led_volt_map.get(voltage, 'Unknown')}",
-        "Circuit": f"{circuit} → {circuit_map.get(circuit, 'Unknown')}",
-        "Light Unit P/N": f"{series}{lightunit}",
-        "Lens Color P/N": f"{series}{lens}",
-        "Voltage P/N": f"{series}{voltage}",
-        "Circuit P/N": f"{series}{circuit}",
-        "Full Part Number": f"{series}{lightunit}{lens}{voltage}-{circuit}"
-    }, debug_info
-
-def decode_incandescent(pn):
-    match = re.match(r"(10250T)(\d{3})(C\d{2})-(\d{2})", pn)
-    if not match:
-        return None, "Regex match failed"
-    series, lightunit, lens, circuit = match.groups()
-
-    lightunit = lightunit.strip().upper()
-    lens = lens.strip().upper()
-    circuit = circuit.strip().upper()
-
-    debug_info = {
-        "Series": series,
-        "Light Unit Code": lightunit,
-        "Lens Code": lens,
-        "Circuit Code": circuit,
-        "Light Unit Found": lightunit in inc_light_map,
-        "Lens Found": lens in inc_lens_map,
-        "Circuit Found": circuit in circuit_map
-    }
-
-    return {
-        "Series": series,
-        "Light Unit": f"{lightunit} → {inc_light_map.get(lightunit, 'Unknown')}",
-        "Lens Color": f"{lens} → {inc_lens_map.get(lens, 'Unknown')}",
-        "Circuit": f"{circuit} → {circuit_map.get(circuit, 'Unknown')}",
-        "Light Unit P/N": f"{series}{lightunit}",
-        "Lens Color P/N": f"{series}{lens}",
-        "Circuit P/N": f"{series}{circuit}",
-        "Full Part Number": f"{series}{lightunit}{lens}-{circuit}"
-    }, debug_info
+catalog_input = st.text_input("Enter a 10250T LED catalog number (e.g., 10250T397LRD06-53):")
 
 if catalog_input:
-    normalized = catalog_input.strip().upper()
-    if "L" in normalized:
-        decoded, debug = decode_led(normalized)
-        type_detected = "LED"
-    else:
-        decoded, debug = decode_incandescent(normalized)
-        type_detected = "Incandescent"
+    normalized = catalog_input.replace("-", "").strip().upper()
 
-    if decoded:
-        st.subheader(f"Detected Type: {type_detected}")
-        st.write("### 🔍 Decoded Components")
-        for key, value in decoded.items():
-            st.write(f"**{key}:** {value}")
-        st.write("### 🐞 Debug Info")
-        for key, value in debug.items():
-            st.write(f"{key}: {value}")
+    if normalized.startswith("10250T") and len(normalized) > 12:
+        code_part = normalized[6:]
+        lightunit_code = code_part[:4]  # e.g., 397L
+        lens_code = code_part[4:6]      # e.g., RD
+        voltage_code = code_part[6:8]   # e.g., 06
+        circuit_code = code_part[8:]    # e.g., 53
+
+        lightunit_label = lightunit_lookup.get(lightunit_code, "Unknown Light Unit")
+        lens_label = lenscolor_lookup.get(lens_code, "Unknown Lens Color")
+        voltage_label = voltage_lookup.get(voltage_code, "Unknown Voltage")
+
+        lightunit_pn = f"10250T{lightunit_code}"
+        lens_pn = f"10250T{lens_code}"
+        voltage_pn = f"10250T{voltage_code}"
+        circuit_pn = f"10250T{circuit_code}"
+
+        st.markdown("### ✅ Decoded Result")
+        st.write(f"**Light Unit**: {lightunit_label}")
+        st.write(f"**Lens Color**: {lens_label}")
+        st.write(f"**Voltage**: {voltage_label}")
+        st.write(f"**Circuit**: {circuit_code}")
+
+        st.markdown("### 🧩 Component Part Numbers")
+        st.write(f"**Light Unit P/N**: `{lightunit_pn}`")
+        st.write(f"**Lens Color P/N**: `{lens_pn}`")
+        st.write(f"**Voltage P/N**: `{voltage_pn}`")
+        st.write(f"**Circuit P/N**: `{circuit_pn}`")
     else:
-        st.error("Invalid part number format or unknown components.")
-        if isinstance(debug, str):
-            st.text(f"Debug: {debug}")
+        st.error("Catalog number must start with '10250T' and be long enough to decode.")
