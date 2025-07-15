@@ -7,9 +7,9 @@ def load_data():
     inc_lens = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv", header=None)
     inc_light = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv", header=None)
     circuit = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv", header=None)
-    led_lens = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv", header=0)
-    led_light = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv", skiprows=2, header=None)
-    led_volt = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv", header=0)
+    led_lens = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv", header=None)
+    led_light = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv", header=None)
+    led_volt = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv", header=None)
 
     inc_lens_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(inc_lens[0], inc_lens[1])}
     inc_light_map = {str(code).strip().upper(): str(label).strip() for label, code in zip(inc_light[0], inc_light[1])}
