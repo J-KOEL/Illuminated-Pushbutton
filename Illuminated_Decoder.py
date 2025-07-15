@@ -1,5 +1,3 @@
-# Regenerate the Streamlit app using corrected column indices for LED lens and voltage files
-
 import streamlit as st
 import pandas as pd
 import re
@@ -24,15 +22,26 @@ def load_data():
 
 inc_lens_map, inc_light_map, circuit_map, led_lens_map, led_light_map, led_volt_map = load_data()
 
-st.title("💡 Illuminated Pushbutton Decoder")
+st.title("💡 Illuminated Pushbutton Decoder with Debug")
 
 catalog_input = st.text_input("Enter a 10250T catalog number (e.g., 10250T397LRD06-53 or 10250T416C21-51):")
 
 def decode_led(pn):
-    match = re.match(r"(10250T)(\\d{3}L)([A-Z]{2})([0-9A-Z]{2})-(\\d{2})", pn)
+    match = re.match(r"(10250T)(\d{3}L)([A-Z]{2})([0-9A-Z]{2})-(\d{2})", pn)
     if not match:
-        return None
+        return None, "Regex match failed"
     series, lightunit, lens, voltage, circuit = match.groups()
+    debug_info = {
+        "Series": series,
+        "Light Unit Code": lightunit,
+        "Lens Code": lens,
+        "Voltage Code": voltage,
+        "Circuit Code": circuit,
+        "Light Unit Found": lightunit in led_light_map,
+        "Lens Found": lens in led_lens_map,
+        "Voltage Found": voltage in led_volt_map,
+        "Circuit Found": circuit in circuit_map
+    }
     return {
         "Series": series,
         "Light Unit": f"{lightunit} → {led_light_map.get(lightunit, 'Unknown')}",
@@ -41,13 +50,22 @@ def decode_led(pn):
         "Circuit": f"{circuit} → {circuit_map.get(circuit, 'Unknown')}",
         "Operator P/N": f"{series}{lightunit}{lens}",
         "Contact Block P/N": f"{series}{circuit}"
-    }
+    }, debug_info
 
 def decode_incandescent(pn):
-    match = re.match(r"(10250T)(\\d{3})(C\\d{2})-(\\d{2})", pn)
+    match = re.match(r"(10250T)(\d{3})(C\d{2})-(\d{2})", pn)
     if not match:
-        return None
+        return None, "Regex match failed"
     series, lightunit, lens, circuit = match.groups()
+    debug_info = {
+        "Series": series,
+        "Light Unit Code": lightunit,
+        "Lens Code": lens,
+        "Circuit Code": circuit,
+        "Light Unit Found": lightunit in inc_light_map,
+        "Lens Found": lens in inc_lens_map,
+        "Circuit Found": circuit in circuit_map
+    }
     return {
         "Series": series,
         "Light Unit": f"{lightunit} → {inc_light_map.get(lightunit, 'Unknown')}",
@@ -55,15 +73,15 @@ def decode_incandescent(pn):
         "Circuit": f"{circuit} → {circuit_map.get(circuit, 'Unknown')}",
         "Operator P/N": f"{series}{lightunit}{lens}",
         "Contact Block P/N": f"{series}{circuit}"
-    }
+    }, debug_info
 
 if catalog_input:
     normalized = catalog_input.strip().upper()
     if "L" in normalized:
-        decoded = decode_led(normalized)
+        decoded, debug = decode_led(normalized)
         type_detected = "LED"
     else:
-        decoded = decode_incandescent(normalized)
+        decoded, debug = decode_incandescent(normalized)
         type_detected = "Incandescent"
 
     if decoded:
@@ -71,5 +89,10 @@ if catalog_input:
         st.write("### 🔍 Decoded Components")
         for key, value in decoded.items():
             st.write(f"**{key}:** {value}")
+        st.write("### 🐞 Debug Info")
+        for key, value in debug.items():
+            st.write(f"{key}: {value}")
     else:
         st.error("Invalid part number format or unknown components.")
+        if isinstance(debug, str):
+            st.text(f"Debug: {debug}")
