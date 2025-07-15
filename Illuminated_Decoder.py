@@ -5,9 +5,9 @@ import pandas as pd
 @st.cache_data
 def load_data():
     # Load LED component files
-    led_lightunit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit 3.csv", skiprows=2, header=None)
-    led_lenscolor_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor 3.csv")
-    led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage 4.csv")
+    led_lightunit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv", skiprows=2, header=None)
+    led_lenscolor_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv")
+    led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv")
 
     # Build lookup dictionaries
     lightunit_lookup = {str(v).strip(): str(k).strip() for k, v in zip(led_lightunit_df[0], led_lightunit_df[1])}
