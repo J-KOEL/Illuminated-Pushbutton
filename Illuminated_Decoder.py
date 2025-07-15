@@ -2,14 +2,14 @@ import streamlit as st
 import pandas as pd
 import re
 
-# Load mapping files
-incandescent_lens_df = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv")
-incandescent_lightunit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv")
-circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv")
+# Load mapping files and ensure all columns are treated as strings
+incandescent_lens_df = pd.read_csv("illuminatedPushbuttonIncandescentLensColor 1.csv", dtype=str)
+incandescent_lightunit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit 1.csv", dtype=str)
+circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit 3.csv", dtype=str)
 
-led_lens_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv")
-led_lightunit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv", skiprows=1)
-led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv")
+led_lens_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor 3.csv", dtype=str)
+led_lightunit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit 3.csv", skiprows=2, names=["Label", "Code", "Unused"], dtype=str)
+led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage 4.csv", dtype=str)
 
 # Create dictionaries for quick lookup
 incandescent_lens_map = dict(zip(incandescent_lens_df['Code'].str.strip(), incandescent_lens_df['Label'].str.strip()))
