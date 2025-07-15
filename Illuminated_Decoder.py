@@ -1,7 +1,6 @@
 # Regenerate the Streamlit app using corrected column indices for LED lens and voltage files
 
-with open("illuminated_decoder.py", "w") as f:
-    f.write('''import streamlit as st
+import streamlit as st
 import pandas as pd
 import re
 
