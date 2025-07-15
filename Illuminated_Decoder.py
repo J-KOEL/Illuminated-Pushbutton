@@ -48,6 +48,10 @@ def decode_led(pn):
         "Lens Color": f"{lens} → {led_lens_map.get(lens, 'Unknown')}",
         "Voltage": f"{voltage} → {led_volt_map.get(voltage, 'Unknown')}",
         "Circuit": f"{circuit} → {circuit_map.get(circuit, 'Unknown')}",
+        "Light Unit P/N": f"{series}{lightunit}",
+        "Lens Color P/N": f"{series}{lens}",
+        "Voltage P/N": f"{series}{voltage}",
+        "Circuit P/N": f"{series}{circuit}",
         "Full Part Number": f"{series}{lightunit}{lens}{voltage}-{circuit}"
     }, debug_info
 
@@ -70,6 +74,9 @@ def decode_incandescent(pn):
         "Light Unit": f"{lightunit} → {inc_light_map.get(lightunit, 'Unknown')}",
         "Lens Color": f"{lens} → {inc_lens_map.get(lens, 'Unknown')}",
         "Circuit": f"{circuit} → {circuit_map.get(circuit, 'Unknown')}",
+        "Light Unit P/N": f"{series}{lightunit}",
+        "Lens Color P/N": f"{series}{lens}",
+        "Circuit P/N": f"{series}{circuit}",
         "Full Part Number": f"{series}{lightunit}{lens}-{circuit}"
     }, debug_info
 
