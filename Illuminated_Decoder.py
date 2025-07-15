@@ -10,7 +10,7 @@ def load_data():
     led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv")
 
     # Incandescent (fixed column selection)
-    inc_light_unit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv")
+    inc_light_unit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv", usecols=["Label", "Code"])
     inc_lens_color_df = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv")
 
     # Circuit (shared)
