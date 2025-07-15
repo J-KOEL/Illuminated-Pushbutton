@@ -83,4 +83,3 @@ if catalog_input:
                 st.error("Unrecognized light unit code.")
     else:
         st.error("Catalog number must start with '10250T' and be long enough to decode.")
-
