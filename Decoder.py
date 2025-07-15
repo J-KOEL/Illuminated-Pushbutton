@@ -10,14 +10,7 @@ def load_data():
     led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv")
 
     # Incandescent (fixed for malformed CSV)
-    inc_light_unit_df = pd.read_csv(
-        "IlluminatedPushbuttonIncandescentLightUnit.csv",
-        header=None,
-        names=["Label", "Code", "Extra"],
-        usecols=["Label", "Code"],
-        skiprows=1,
-        engine="python"
-    )
+    inc_light_unit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv")
     inc_lens_color_df = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv")
     circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv")
 
