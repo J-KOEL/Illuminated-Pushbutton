@@ -5,14 +5,14 @@ import pandas as pd
 @st.cache_data
 def load_data():
     # LED
-    led_light_unit_df = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv")
-    led_lens_color_df = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv")
-    led_voltage_df = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv")
+    led_light_unit = pd.read_csv("IlluminatedPushbuttonLEDLightUnit.csv")
+    led_lens_color = pd.read_csv("IlluminatedPushbuttonLEDLensColor.csv")
+    led_voltage = pd.read_csv("IlluminatedPushbuttonLEDVoltage.csv")
 
     # Incandescent (fixed for malformed CSV)
-    inc_light_unit_df = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv")
-    inc_lens_color_df = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv")
-    circuit_df = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv")
+    inc_light_unit = pd.read_csv("IlluminatedPushbuttonIncandescentLightUnit.csv")
+    inc_lens_color = pd.read_csv("illuminatedPushbuttonIncandescentLensColor.csv")
+    circuit = pd.read_csv("NonIlluminatedPushbuttonCircuit.csv")
 
     # Create dictionaries
     led_light_unit = {row["Code"].strip(): row["Label"].strip() for _, row in led_light_unit_df.iterrows()}
