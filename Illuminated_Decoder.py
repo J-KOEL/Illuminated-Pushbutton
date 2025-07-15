@@ -73,7 +73,3 @@ if catalog_input:
             st.write(f"**{key}:** {value}")
     else:
         st.error("Invalid part number format or unknown components.")
-''')
-
-print("Streamlit app saved to illuminated_decoder.py")
-
